@@ -1,20 +1,12 @@
 "use strict";
 
 const {By} = require ('selenium-webdriver');
+const BasePage = require ('./base.page');
 
-module.exports = class RegisterPage {
-    #driver;
-
-    constructor(webdriver) {
-        this.#driver = webdriver;
-    }
-
-    getCurrentUrl () {
-        return this.#driver.getCurrentUrl();
-    }
+module.exports = class RegisterPage extends BasePage {
 
     getRegisterButton () {
-        return this.#driver.findElement(By.name('register'));
+        return this.driver().findElement(By.name('register'));
     }
 
     getRegisterButtonValue () {
@@ -22,26 +14,26 @@ module.exports = class RegisterPage {
     }
 
     getInputFirstName () {
-        return this.#driver.findElement(By.name('ime'));
+        return this.driver().findElement(By.name('ime'));
     }
 
     getInputLastName () {
-        return this.#driver.findElement(By.name('prezime'));
+        return this.driver().findElement(By.name('prezime'));
     }
 
     getInputEmail () {
-        return this.#driver.findElement(By.name('email'))
+        return this.driver().findElement(By.name('email'))
     }
 
     fillInputUsername (username) {
-        this.#driver.findElement(By.name('korisnicko')).sendKeys(username);
+        this.driver().findElement(By.name('korisnicko')).sendKeys(username);
     }
 
     fillInputPassword (password) {
-        this.#driver.findElement(By.name('lozinka')).sendKeys(password);
+        this.driver().findElement(By.name('lozinka')).sendKeys(password);
     }
 
     fillInputPasswordConfirm (password) {
-        this.#driver.findElement(By.name('lozinkaOpet')).sendKeys(password);
+        this.driver().findElement(By.name('lozinkaOpet')).sendKeys(password);
     }
 }

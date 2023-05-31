@@ -1,36 +1,41 @@
 "use strict";
 
 const {By} = require("selenium-webdriver");
+const BasePage = require('./base.page');
 
-module.exports = class LoginPage {
-    #driver;
-
-    constructor (webdriver) {
-        this.#driver = webdriver;
-    }
+module.exports = class LoginPage extends BasePage {
 
     goToPage () {
-        this.#driver.get ('http://shop.qa.rs/login');
+        this.driver().get ('http://shop.qa.rs/login');
     }
 
-    getLoginButton () {
-        return this.#driver.findElement(By.name('login'));
+    getInputUsername () {
+        return this.driver().findElement(By.name('username'));
     }
+    getInputPassword () {
+        return this.driver().findElement(By.name('password'));
+    }
+    getLoginButton () {
+        return this.driver().findElement(By.name('login'));
+    }
+    fillInputUsername (username) {
+        this.getInputUsername().sendKeys(username);
+    }
+    fillInputPassword (password) {
+        this.getInputPassword().sendKeys(password);
+    }
+
+    async clickLoginButton () {
+        await this.getLoginButton().click();
+    }
+
 
     getLoginButtonValue () {
         return this.getLoginButton().getAttribute('value');
     }
 
     getCurrentUrl () {
-        return this.#driver.getCurrentUrl();
-    }
-
-    fillInputUsername (username) {
-        this.#driver.findElement(By.name('username')).sendKeys(username);
-    }
-
-    fillInputPassword (password) {
-        this.#driver.findElement(By.name('password')).sendKeys(password);
+        return this.driver().getCurrentUrl();
     }
 
 }
