@@ -10,6 +10,7 @@ const LoginPage = require ('../pages/login.page');
 const CartPage = require ('../pages/cart.page');
 const {describe} = require ('mocha');
 const CheckoutPage = require ('../pages/checkout.page');
+const AccountPage = require ('../pages/account.page');
 
 
 describe.only('shop.QA.rs tests', function () {
@@ -19,6 +20,7 @@ describe.only('shop.QA.rs tests', function () {
     let pageLoginPage;
     let pageCartPage;
     let pageCheckoutPage;
+    let pageAccountPage;
 
     const packageToAdd = 'starter';
     const packageQuantity = '2';
@@ -31,6 +33,7 @@ describe.only('shop.QA.rs tests', function () {
         pageLoginPage = new LoginPage(driver);
         pageCartPage = new CartPage (driver);
         pageCheckoutPage = new CheckoutPage(driver);
+        pageAccountPage = new AccountPage(driver);
     });
 
     after (async function() {
@@ -60,13 +63,13 @@ describe.only('shop.QA.rs tests', function () {
     it ('Successfully perform registration', async function () {
         await pageRegister.getInputFirstName().sendKeys('Jasna');
         await pageRegister.getInputLastName().sendKeys('Toracki');
-        await pageRegister.getInputEmail().sendKeys('jasna@test.ts');
+        await pageRegister.getInputEmail().sendKeys('test@test.ts');
 
         const randomNumber = pageRegister.random(10000, 100000000);
 
         await pageRegister.fillInputUsername(`jasna.toracki.${randomNumber}`);
-        await pageRegister.fillInputPassword('nekaLozinka12345');
-        await pageRegister.fillInputPasswordConfirm('nekaLozinka12345');
+        await pageRegister.fillInputPassword('password123456');
+        await pageRegister.fillInputPasswordConfirm('password123456');
 
         await pageRegister.getRegisterButton().click();
         expect (await pageHomePage.getSuccessAlertText()).to.contain('Uspeh!');
@@ -81,11 +84,30 @@ describe.only('shop.QA.rs tests', function () {
 
     it ('Login user', async function () {
         //await pageLoginPage.goToPage();
-        await pageLoginPage.fillInputUsername('bob.buttons');
-        await pageLoginPage.fillInputPassword('nekaLozinka123');
+        await pageLoginPage.fillInputUsername('franc');
+        await pageLoginPage.fillInputPassword('kafka123');
         await pageLoginPage.clickLoginButton();
         expect (await pageHomePage.getSuccessAlertMessage()).to.contain('Welcome back');
         assert.isTrue (await pageHomePage.isLogoutLinkDisplayed());
+    });
+
+    it ('Goes to account page and fills in information', async function () {
+        await pageAccountPage.goToPage();
+
+        expect (await pageAccountPage.getPageTitle()).to.be.eq('My Account')
+
+        await pageAccountPage.fillInputAddress1('Street 1');
+        await pageAccountPage.fillInputCity('Belgrade');
+        await pageAccountPage.fillInputZipCode('11000');
+        await pageAccountPage.fillInputCountry('Serbia');
+
+        await pageAccountPage.clickOnButtonSave();
+
+        await pageAccountPage.goToPage();
+        expect (await pageAccountPage.getInputAddress1().getAttribute('value')).to.eq('Street 1');
+        expect (await pageAccountPage.getInputCity().getAttribute('value')).to.eq('Belgrade');
+        expect (await pageAccountPage.getInputZipCode().getAttribute('value')).to.eq('11000');
+        expect (await pageAccountPage.getInputCountry().getAttribute('value')).to.eq('Serbia');
     });
 
     it ('Empties the shopping cart', async function () {
@@ -131,7 +153,7 @@ describe.only('shop.QA.rs tests', function () {
         const itemPrice = await pageCartPage.getItemPrice(orderRow);
         const itemPriceTotal = await pageCartPage.getItemPriceTotal(orderRow);
 
-        const quantity = Number(itemQuantity.getText());
+        const quantity = Number(await itemQuantity.getText());
 
         const price = Number ((await itemPrice.getText()).substring(1));
         const total = Number ((await itemPriceTotal.getText()).substring(1));
